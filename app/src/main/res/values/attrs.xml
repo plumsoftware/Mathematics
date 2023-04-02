@@ -1,0 +1,16 @@
+
+<resources>
+    <attr name="colorGreen" format="color" />
+    <attr name="colorOnGreen" format="color" />
+    <attr name="colorGreenContainer" format="color" />
+    <attr name="colorOnGreenContainer" format="color" />
+    <attr name="harmonizeGreen" format="boolean" />
+    <attr name="colorRed" format="color" />
+    <attr name="colorOnRed" format="color" />
+    <attr name="colorRedContainer" format="color" />
+    <attr name="colorOnRedContainer" format="color" />
+    <attr name="harmonizeRed" format="boolean" />
+
+    <attr name="textColor" format="color" />
+    <attr name="harmonizeText" format="boolean" />
+</resources>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "45391411797",
+    "project_id": "mathematics-f4de0",
+    "storage_bucket": "mathematics-f4de0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45391411797:android:ff4321d98866e2068a32dc",
+        "android_client_info": {
+          "package_name": "ru.slava.mathematics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45391411797-ncp8kek4vrdkc191uf1laggrf6prrbb3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.slava.mathematics",
+            "certificate_hash": "8afcd531774b5a7c4f159fe19a694ee0082054e8"
+          }
+        },
+        {
+          "client_id": "45391411797-qpsogaden4fp0708nhso3qn0defcrbbf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4pCCH8tu6Hi1Ph9ztPWg9tAJEY70YWHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45391411797-qpsogaden4fp0708nhso3qn0defcrbbf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

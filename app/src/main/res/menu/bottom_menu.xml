@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu"
+        android:icon="@drawable/ic_menu_blue"
+        android:title="Меню"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/statistic"
+        android:icon="@drawable/ic_statistic_blue"
+        android:title="Статистика"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/information"
+        android:icon="@drawable/ic_amonestation_blue"
+        android:title="Правила"
+        app:showAsAction="ifRoom" />
+    <!--    <item-->
+    <!--        android:id="@+id/aboutApp"-->
+    <!--        android:icon="@drawable/ic_info"-->
+    <!--        android:title="О приложении" />-->
+</menu>

@@ -1,0 +1,26 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Математический тренажер</string>
+
+    <string name="textInfo" tools:ignore="TypographyFractions">Добрый день!\nВот несколько правил заполнения поля для ответа. Соблюдайте эти правила, чтобы приложение зачло ваш ответ. Правильный ответ и количество верных или неверных ответов вы можете увидет в верхней части эрана.\n1) Указывайте в ответ только число без пробелов и единиц измерения.\n2) При получении в ответе отрицательного числа, просто пишите это число со знаком минус (-) и без пробелов, как обычно (-2; -54).\n3) При получении в ответе положительного  числа, просто пишите это число без знака плюс (+).\n4) Соблюдайте пункты 3 и 4, работая и с десятичными дробями (2.4; -34.65).\n*Примечание: Указывайте десятичную дробь через точку, а не через запятую (2.4; 546.244).\n5) При работе с обыкновенными дробями (3/4) пишите по образцу (числитель/знаменатель) без пробелов.\n6) При получении в ответе отрицательной обыкновенной дроби(-3/4) пишите по образцу (-числитель/знаменатель) без пробелов.</string>
+    <string name="APPLICATION_ID">ca-app-pub-1248787092735969~3117006363</string>
+    <string name="BANNER_ADS_ID_">ca-app-pub-1248787092735969/1337004924</string>
+    <string name="INTERSTITIAL_ADS_ID">ca-app-pub-1248787092735969/3770955943</string>
+    <string name="Banner_id">R-M-1737730-1</string>
+    <string name="Banner_id_demo">R-M-DEMO-320x50</string>
+    <string name="Interstitial_id">R-M-1737730-2</string>
+    <string name="Rewarded_id">R-M-1737730-3</string>
+    <string name="b"><![CDATA[>]]></string>
+    <string name="e">=</string>
+    <string name="drob">/</string>
+    <string name="m">-</string>
+    <string name="l"><![CDATA[<]]></string>
+    <string name="dot">.</string>
+    <string name="fraction">/</string>
+    <string name="minus">-</string>
+    <string name="equal">=</string>
+    <string name="more"><![CDATA[>]]></string>
+    <string name="less"><![CDATA[<]]></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="select">Выберите ваш класс обучения</string>
+</resources>

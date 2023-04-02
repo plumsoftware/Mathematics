@@ -1,0 +1,41 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppSplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorPrimaryDark">@color/md_theme_light_primary</item>
+        <item name="colorAccent">@color/md_theme_light_primary</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">#000</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorPrimaryDark">@color/md_theme_light_primary</item>
+        <item name="colorAccent">@color/md_theme_light_primary</item>
+<!--        <item name="android:windowBackground">#000</item>-->
+<!--        <item name="android:navigationBarColor" tools:ignore="NewApi">@color/nav_back</item>-->
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+    </style>
+
+    <style name="AppThemeClasses" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorPrimaryDark">@color/md_theme_light_primary</item>
+        <item name="colorAccent">@color/md_theme_light_primary</item>
+<!--        <item name="android:windowBackground">@color/back</item>-->
+<!--        <item name="android:navigationBarColor" tools:ignore="NewApi">@color/nav_back</item>-->
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+    </style>
+
+    <style name="AppThemeMenu" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorPrimaryDark">@color/md_theme_light_primary</item>
+        <item name="colorAccent">@color/md_theme_light_primary</item>
+<!--        <item name="android:windowBackground">@color/back</item>-->
+    </style>
+
+</resources>

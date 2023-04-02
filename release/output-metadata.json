@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "ru.slava.mathematics",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 16,
+      "versionName": "3.0.0-Super update",
+      "outputFile": "app-release.apk"
+    }
+  ],
+  "elementType": "File"
+}
