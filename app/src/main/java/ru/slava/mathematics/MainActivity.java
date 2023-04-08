@@ -143,9 +143,9 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case 10:
                                 customProgressDialog.dismiss();
-                                Toast.makeText(MainActivity.this, "В разработке!", Toast.LENGTH_SHORT).show();
-                                //startActivity(intent8);
-                                //overridePendingTransition(R.anim.anim_layout_top, R.anim.anim_layout_bottom);
+                                //Toast.makeText(MainActivity.this, "В разработке!", Toast.LENGTH_SHORT).show();
+                                startActivity(intent8);
+                                overridePendingTransition(R.anim.anim_layout_top, R.anim.anim_layout_bottom);
                                 break;
                             case 2:
                                 customProgressDialog.dismiss();

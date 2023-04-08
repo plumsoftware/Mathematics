@@ -41,9 +41,12 @@ import com.yandex.mobile.ads.interstitial.InterstitialAd;
 import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.IntStream;
+
+import ru.slava.mathematics.equation.Equation8_1;
 
 public class Class8 extends AppCompatActivity {
     private String string, se = "";
@@ -164,18 +167,18 @@ public class Class8 extends AppCompatActivity {
         task.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
 
         Random random = new Random();
-        int m = random.nextInt(20);  /** ЗДЕСЬ ЧИСЛО ЗАДАНИЙ **/
+        int m = random.nextInt(21);  /** ЗДЕСЬ ЧИСЛО ЗАДАНИЙ **/
         // 0 - 7 SMALL
         // 8 - 14 BIG
         // 15 - 16 SMALL
 
-        m = 20;
+        m = 21;
 
         if ((m > 0 && m < 8) || (m > 14 && m < 20)) {
             l2.setVisibility(View.VISIBLE);
             l1.setVisibility(View.GONE);
         }
-        if (m > 7 && m < 15 || m == 20) {
+        if (m > 7 && m < 15 || m >= 20) {
             l2.setVisibility(View.GONE);
             l1.setVisibility(View.VISIBLE);
         }
@@ -196,7 +199,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " + " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
         }
-        if (m == 1) {
+        else if (m == 1) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -212,7 +215,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " - " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
         }
-        if (m == 2) {
+        else if (m == 2) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -228,7 +231,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " + " + Float.toString(num2) + " - " + Float.toString(num3) + " = ");
         }
-        if (m == 3) {
+        else if (m == 3) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -244,7 +247,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText("(" + Float.toString(num1) + " + " + Float.toString(num2) + ") × " + Float.toString(num3) + " = ");
         }
-        if (m == 4) {
+        else if (m == 4) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -260,7 +263,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " × " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
         }
-        if (m == 5) {
+        else if (m == 5) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -276,7 +279,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " - " + Float.toString(num2) + " - " + Float.toString(num3) + " = ");
         }
-        if (m == 6) {
+        else if (m == 6) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -292,7 +295,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText("(" + Float.toString(num1) + " - " + Float.toString(num2) + ") × " + Float.toString(num3) + " = ");
         }
-        if (m == 7) {
+        else if (m == 7) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -310,13 +313,13 @@ public class Class8 extends AppCompatActivity {
             task.setText(Float.toString(num3) + " : " + Float.toString(num1) + " = ");
 
         }
-        if (m == 8) {
+        else if (m == 8) {
             int num1 = (random.nextInt(9) + 1) * 10;
             textViewBigTask.setText("Трактор едет по дороге, проезжая " + Integer.toString(num1) + " метров за каждую секунду. Выразите его скорость в км/ч.");
             int result = (int) (num1 * 3.6);
             string = Integer.toString(result);
         }
-        if (m == 9) {
+        else if (m == 9) {
             int num1 = (random.nextInt(40) + 10) * 10;
             int num2 = (random.nextInt(5) + 1) * 5;
             textViewBigTask.setText("Ежемесячная плата за телефон составляет " + Integer.toString(num1) + " рублей  в месяц. Сколько рублей составит ежемесячная плата за телефон, если она вырастет на " + Integer.toString(num2) + " %.");
@@ -328,7 +331,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
             }
         }
-        if (m == 10) {
+        else if (m == 10) {
             int num1 = random.nextInt(5) + 10;
             int x = random.nextInt(5) + 10;
             int result = x + num1;
@@ -336,7 +339,7 @@ public class Class8 extends AppCompatActivity {
             textViewBigTask.setText("Найдите корень уравнения \n" + "X + " + Integer.toString(num1) + " = " + Integer.toString(result));
             //x + num1 = result
         }
-        if (m == 11) {
+        else if (m == 11) {
             int num1 = random.nextInt(5) + 10;
             int num2 = random.nextInt(5) + 10;
             int x = random.nextInt(5) + 10;
@@ -346,7 +349,7 @@ public class Class8 extends AppCompatActivity {
             string = Integer.toString(x);
 
         }
-        if (m == 12) {
+        else if (m == 12) {
             int num1 = random.nextInt(10) + 5;
             int x = random.nextInt(10) + 5;
             //(x-num1) = (x - num1)^2
@@ -367,7 +370,7 @@ public class Class8 extends AppCompatActivity {
             }
 
         }
-        if (m == 13) {
+        else if (m == 13) {
             int k = random.nextInt(5) + 1;
             int b = random.nextInt(5) + 1;
             int x = random.nextInt(4) + 1;
@@ -375,7 +378,7 @@ public class Class8 extends AppCompatActivity {
             int result = (x * k) + b;
             string = Integer.toString(result);
         }
-        if (m == 14) {
+        else if (m == 14) {
             int b1 = random.nextInt(9) + 2;
             int b2 = random.nextInt(9) - 15;
             //y = kx + b
@@ -392,7 +395,7 @@ public class Class8 extends AppCompatActivity {
             }
 
         }
-        if (m == 15) {
+        else if (m == 15) {
             int num3 = random.nextInt(7) + 1;
             int num4 = num3 + 1;
 
@@ -455,9 +458,9 @@ public class Class8 extends AppCompatActivity {
                     }
                 }
             }
-            task.setText(Integer.toString(num1) + "/" + Integer.toString(num2) + " × ( " + Integer.toString(num3) + "/" + Integer.toString(num4) + " - " + Integer.toString(num5) + "/" + Integer.toString(num6) + " ) = ?");
+            task.setText(Integer.toString(num1) + "/" + Integer.toString(num2) + " × ( " + Integer.toString(num3) + "/" + Integer.toString(num4) + " - " + Integer.toString(num5) + "/" + Integer.toString(num6) + " ) = ");
         }
-        if (m == 16) {
+        else if (m == 16) {
             int num3 = random.nextInt(7) + 1;
             int num4 = num3 + 1;
 
@@ -520,7 +523,7 @@ public class Class8 extends AppCompatActivity {
         }
 
         /** ТУТ СНИЗУ СТОИТ ПРОВЕРКА **/
-        if (m == 17) {
+        else if (m == 17) {
             /** ТУТ СТОИТ ПРОВЕРКА **/
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
@@ -542,7 +545,7 @@ public class Class8 extends AppCompatActivity {
             float result = ((float) d) / 10;
             string = Float.toString(result);
         }
-        if (m == 18) {
+        else if (m == 18) {
             /** ТУТ СТОИТ ПРОВЕРКА **/
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
@@ -566,7 +569,7 @@ public class Class8 extends AppCompatActivity {
             float result = ((float) d) / 10;
             string = Float.toString(result);
         }
-        if (m == 19) {
+        else if (m == 19) {
             /** ТУТ СТОИТ ПРОВЕРКА **/
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
@@ -592,47 +595,25 @@ public class Class8 extends AppCompatActivity {
         }
         // СЛОЖНА
         // КВАДРАТНОЕ УРАВНЕНИЕ
-        if (m == 20) {
-            int x1 = random.nextInt(10) + 1;
-            int x2 = random.nextInt(10) + 1;
-
-            int num1 = random.nextInt(8) + 2; //a
-            int num2 = random.nextInt(10) + 1; //b
-            int d = random.nextInt(10) + 1; //d
-
-            double a1 = ((-1 * (double) num2) + (double) d) / (2 * (double) num1);
-            double a2 = ((-1 * (double) num2) - (double) d) / (2 * (double) num1);
-
-            while (a1 % 1 != 0 && a2 % 1 != 0) {
-                num1 = random.nextInt(8) + 2; //a
-                num2 = random.nextInt(10) + 1; //b
-                d = random.nextInt(10) + 1; //d
-
-                a1 = ((-1 * (double) num2) + (double) d) / (2 * (double) num1);
-                a2 = ((-1 * (double) num2) - (double) d) / (2 * (double) num1);
-
-                Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
-
-                if (a1 % 1 == 0 && a2 % 1 == 0) {
-
-                    double num3 = ((double) d - num2 * num2) / (4 * num1);
-
-                    textViewBigTask.setText("Найдите сумму корней уравнения:\n" + Integer.toString(num1) + "x²" + " + " + Integer.toString(num2) + "x" + " + " + Double.toString(num3) + " = 0");
-
-                    int result = x1 + x2;
-
-                    string = Integer.toString(result);
-
-                    break;
-                }
-            }
+        else if (m == 20) {
+            QuadraticEquation quadraticEquation = QuadraticEquation.generateQuadraticEquation(101, 200);
+            textViewBigTask.setText("Решите квадратное уравнение:\n " + quadraticEquation.getLine() + "\nЕсли уравненние имеет несколько корней, то запишите меньший из них.");
+            int result = Math.min(quadraticEquation.getInts()[0], quadraticEquation.getInts()[1]);
+            string = Integer.toString(result);
+        }
+        /**08.04.2023**/
+        else if (m == 21) {
+            Equation8_1 equation8_1 = Equation8_1.generateEquation8_1(10, 16);
+            textViewBigTask.setText("Решите квадратное уравнение:\n " + equation8_1.getLine() + "\nЕсли уравненние имеет несколько корней, то запишите только целый.");
+            int result = equation8_1.getInts()[0];
+            string = Integer.toString(result);
         }
 
         if ((m > 0 && m < 8) || (m > 14 && m < 20)) {
             String send = bugs.add(task.getText().toString()) + string;
             bugs.add(send);
         }
-        if (m > 7 && m < 15 || m == 20) {
+        if (m > 7 && m < 15 || m >= 20) {
             String send = bugs.add(textViewBigTask.getText().toString()) + string;
             bugs.add(send);
         }
@@ -663,12 +644,12 @@ public class Class8 extends AppCompatActivity {
         userAnswer.delete(0, userAnswer.length());
 
         Random random = new Random();
-        int m = random.nextInt(20);  /** ЗДЕСЬ ЧИСЛО ЗАДАНИЙ **/
+        int m = random.nextInt(21);  /** ЗДЕСЬ ЧИСЛО ЗАДАНИЙ **/
         // 0 - 7 SMALL
         // 8 - 14 BIG
         // 15 - 16 SMALL
 
-        m = 20;
+//        m = 20;
 
         if ((m > 0 && m < 8) || (m > 14 && m < 20)) {
             l2.setVisibility(View.VISIBLE);
@@ -695,7 +676,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " + " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
         }
-        if (m == 1) {
+        else if (m == 1) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -711,7 +692,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " - " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
         }
-        if (m == 2) {
+        else if (m == 2) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -727,7 +708,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " + " + Float.toString(num2) + " - " + Float.toString(num3) + " = ");
         }
-        if (m == 3) {
+        else if (m == 3) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -743,7 +724,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText("(" + Float.toString(num1) + " + " + Float.toString(num2) + ") × " + Float.toString(num3) + " = ");
         }
-        if (m == 4) {
+        else if (m == 4) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -759,7 +740,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " × " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
         }
-        if (m == 5) {
+        else if (m == 5) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -775,7 +756,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText(Float.toString(num1) + " - " + Float.toString(num2) + " - " + Float.toString(num3) + " = ");
         }
-        if (m == 6) {
+        else if (m == 6) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -791,7 +772,7 @@ public class Class8 extends AppCompatActivity {
             string = Float.toString(result);
             task.setText("(" + Float.toString(num1) + " - " + Float.toString(num2) + ") × " + Float.toString(num3) + " = ");
         }
-        if (m == 7) {
+        else if (m == 7) {
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
 
@@ -809,13 +790,13 @@ public class Class8 extends AppCompatActivity {
             task.setText(Float.toString(num3) + " : " + Float.toString(num1) + " = ");
 
         }
-        if (m == 8) {
+        else if (m == 8) {
             int num1 = (random.nextInt(9) + 1) * 10;
             textViewBigTask.setText("Трактор едет по дороге, проезжая " + Integer.toString(num1) + " метров за каждую секунду. Выразите его скорость в км/ч.");
             int result = (int) (num1 * 3.6);
             string = Integer.toString(result);
         }
-        if (m == 9) {
+        else if (m == 9) {
             int num1 = (random.nextInt(40) + 10) * 10;
             int num2 = (random.nextInt(5) + 1) * 5;
             textViewBigTask.setText("Ежемесячная плата за телефон составляет " + Integer.toString(num1) + " рублей  в месяц. Сколько рублей составит ежемесячная плата за телефон, если она вырастет на " + Integer.toString(num2) + " %.");
@@ -827,7 +808,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
             }
         }
-        if (m == 10) {
+        else if (m == 10) {
             int num1 = random.nextInt(5) + 10;
             int x = random.nextInt(5) + 10;
             int result = x + num1;
@@ -835,7 +816,7 @@ public class Class8 extends AppCompatActivity {
             textViewBigTask.setText("Найдите корень уравнения \n" + "X + " + Integer.toString(num1) + " = " + Integer.toString(result));
             //x + num1 = result
         }
-        if (m == 11) {
+        else if (m == 11) {
             int num1 = random.nextInt(5) + 10;
             int num2 = random.nextInt(5) + 10;
             int x = random.nextInt(5) + 10;
@@ -845,7 +826,7 @@ public class Class8 extends AppCompatActivity {
             string = Integer.toString(x);
 
         }
-        if (m == 12) {
+        else if (m == 12) {
             int num1 = random.nextInt(10) + 5;
             int x = random.nextInt(10) + 5;
             //(x-num1) = (x - num1)^2
@@ -866,7 +847,7 @@ public class Class8 extends AppCompatActivity {
             }
 
         }
-        if (m == 13) {
+        else if (m == 13) {
             int k = random.nextInt(5) + 1;
             int b = random.nextInt(5) + 1;
             int x = random.nextInt(4) + 1;
@@ -874,7 +855,7 @@ public class Class8 extends AppCompatActivity {
             int result = (x * k) + b;
             string = Integer.toString(result);
         }
-        if (m == 14) {
+        else if (m == 14) {
             int b1 = random.nextInt(9) + 2;
             int b2 = random.nextInt(9) - 15;
             //y = kx + b
@@ -891,7 +872,7 @@ public class Class8 extends AppCompatActivity {
             }
 
         }
-        if (m == 15) {
+        else if (m == 15) {
             int num3 = random.nextInt(7) + 1;
             int num4 = num3 + 1;
 
@@ -954,9 +935,9 @@ public class Class8 extends AppCompatActivity {
                     }
                 }
             }
-            task.setText(Integer.toString(num1) + "/" + Integer.toString(num2) + " × ( " + Integer.toString(num3) + "/" + Integer.toString(num4) + " - " + Integer.toString(num5) + "/" + Integer.toString(num6) + " ) = ?");
+            task.setText(Integer.toString(num1) + "/" + Integer.toString(num2) + " × ( " + Integer.toString(num3) + "/" + Integer.toString(num4) + " - " + Integer.toString(num5) + "/" + Integer.toString(num6) + " ) = ");
         }
-        if (m == 16) {
+        else if (m == 16) {
             int num3 = random.nextInt(7) + 1;
             int num4 = num3 + 1;
 
@@ -1019,7 +1000,7 @@ public class Class8 extends AppCompatActivity {
         }
 
         /** ТУТ СНИЗУ СТОИТ ПРОВЕРКА **/
-        if (m == 17) {
+        else if (m == 17) {
             /** ТУТ СТОИТ ПРОВЕРКА **/
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
@@ -1041,7 +1022,7 @@ public class Class8 extends AppCompatActivity {
             float result = ((float) d) / 10;
             string = Float.toString(result);
         }
-        if (m == 18) {
+        else if (m == 18) {
             /** ТУТ СТОИТ ПРОВЕРКА **/
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
@@ -1065,7 +1046,7 @@ public class Class8 extends AppCompatActivity {
             float result = ((float) d) / 10;
             string = Float.toString(result);
         }
-        if (m == 19) {
+        else if (m == 19) {
             /** ТУТ СТОИТ ПРОВЕРКА **/
             int a = random.nextInt(900) + 99;
             float num1 = ((float) a) / 10;
@@ -1092,39 +1073,10 @@ public class Class8 extends AppCompatActivity {
         // СЛОЖНА
         // КВАДРАТНОЕ УРАВНЕНИЕ
         if (m == 20) {
-            int x1 = random.nextInt(10) + 1;
-            int x2 = random.nextInt(10) + 1;
-
-            int num1 = random.nextInt(8) + 2; //a
-            int num2 = random.nextInt(10) + 1; //b
-            int d = random.nextInt(10) + 1; //d
-
-            double a1 = ((-1 * (double) num2) + (double) d) / (2 * (double) num1);
-            double a2 = ((-1 * (double) num2) - (double) d) / (2 * (double) num1);
-
-            while (a1 % 1 != 0 && a2 % 1 != 0) {
-                num1 = random.nextInt(8) + 2; //a
-                num2 = random.nextInt(10) + 1; //b
-                d = random.nextInt(10) + 1; //d
-
-                a1 = ((-1 * (double) num2) + (double) d) / (2 * (double) num1);
-                a2 = ((-1 * (double) num2) - (double) d) / (2 * (double) num1);
-
-                Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
-
-                if (a1 % 1 == 0 && a2 % 1 == 0) {
-
-                    double num3 = ((double) d - num2 * num2) / (4 * num1);
-
-                    textViewBigTask.setText("Найдите сумму корней уравнения:\n" + Integer.toString(num1) + "x²" + " + " + Integer.toString(num2) + "x" + " + " + Double.toString(num3) + " = 0");
-
-                    int result = x1 + x2;
-
-                    string = Integer.toString(result);
-
-                    break;
-                }
-            }
+            QuadraticEquation quadraticEquation = QuadraticEquation.generateQuadraticEquation(101, 200);
+            textViewBigTask.setText("Решите квадратное уравнение:\n " + quadraticEquation.getLine() + "\nЕсли уравненние имеет несколько корней, то запишите меньший из них.");
+            int result = Math.min(quadraticEquation.getInts()[0], quadraticEquation.getInts()[1]);
+            string = Integer.toString(result);
         }
 
         if ((m > 0 && m < 8) || (m > 14 && m < 20)) {
@@ -1167,12 +1119,12 @@ public class Class8 extends AppCompatActivity {
             userAnswer.delete(0, userAnswer.length());
 
             Random random = new Random();
-            int m = random.nextInt(20);  /** ЗДЕСЬ ЧИСЛО ЗАДАНИЙ **/
+            int m = random.nextInt(21);  /** ЗДЕСЬ ЧИСЛО ЗАДАНИЙ **/
             // 0 - 7 SMALL
             // 8 - 14 BIG
             // 15 - 16 SMALL
 
-            m = 20;
+//            m = 20;
 
             if ((m > 0 && m < 8) || (m > 14 && m < 20)) {
                 l2.setVisibility(View.VISIBLE);
@@ -1199,7 +1151,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
                 task.setText(Float.toString(num1) + " + " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
             }
-            if (m == 1) {
+            else if (m == 1) {
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
 
@@ -1215,7 +1167,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
                 task.setText(Float.toString(num1) + " - " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
             }
-            if (m == 2) {
+            else if (m == 2) {
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
 
@@ -1231,7 +1183,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
                 task.setText(Float.toString(num1) + " + " + Float.toString(num2) + " - " + Float.toString(num3) + " = ");
             }
-            if (m == 3) {
+            else if (m == 3) {
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
 
@@ -1247,7 +1199,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
                 task.setText("(" + Float.toString(num1) + " + " + Float.toString(num2) + ") × " + Float.toString(num3) + " = ");
             }
-            if (m == 4) {
+            else if (m == 4) {
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
 
@@ -1263,7 +1215,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
                 task.setText(Float.toString(num1) + " × " + Float.toString(num2) + " + " + Float.toString(num3) + " = ");
             }
-            if (m == 5) {
+            else if (m == 5) {
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
 
@@ -1279,7 +1231,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
                 task.setText(Float.toString(num1) + " - " + Float.toString(num2) + " - " + Float.toString(num3) + " = ");
             }
-            if (m == 6) {
+            else if (m == 6) {
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
 
@@ -1295,7 +1247,7 @@ public class Class8 extends AppCompatActivity {
                 string = Float.toString(result);
                 task.setText("(" + Float.toString(num1) + " - " + Float.toString(num2) + ") × " + Float.toString(num3) + " = ");
             }
-            if (m == 7) {
+            else if (m == 7) {
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
 
@@ -1313,13 +1265,13 @@ public class Class8 extends AppCompatActivity {
                 task.setText(Float.toString(num3) + " : " + Float.toString(num1) + " = ");
 
             }
-            if (m == 8) {
+            else if (m == 8) {
                 int num1 = (random.nextInt(9) + 1) * 10;
                 textViewBigTask.setText("Трактор едет по дороге, проезжая " + Integer.toString(num1) + " метров за каждую секунду. Выразите его скорость в км/ч.");
                 int result = (int) (num1 * 3.6);
                 string = Integer.toString(result);
             }
-            if (m == 9) {
+            else if (m == 9) {
                 int num1 = (random.nextInt(40) + 10) * 10;
                 int num2 = (random.nextInt(5) + 1) * 5;
                 textViewBigTask.setText("Ежемесячная плата за телефон составляет " + Integer.toString(num1) + " рублей  в месяц. Сколько рублей составит ежемесячная плата за телефон, если она вырастет на " + Integer.toString(num2) + " %.");
@@ -1331,7 +1283,7 @@ public class Class8 extends AppCompatActivity {
                     string = Float.toString(result);
                 }
             }
-            if (m == 10) {
+            else if (m == 10) {
                 int num1 = random.nextInt(5) + 10;
                 int x = random.nextInt(5) + 10;
                 int result = x + num1;
@@ -1339,7 +1291,7 @@ public class Class8 extends AppCompatActivity {
                 textViewBigTask.setText("Найдите корень уравнения \n" + "X + " + Integer.toString(num1) + " = " + Integer.toString(result));
                 //x + num1 = result
             }
-            if (m == 11) {
+            else if (m == 11) {
                 int num1 = random.nextInt(5) + 10;
                 int num2 = random.nextInt(5) + 10;
                 int x = random.nextInt(5) + 10;
@@ -1349,7 +1301,7 @@ public class Class8 extends AppCompatActivity {
                 string = Integer.toString(x);
 
             }
-            if (m == 12) {
+            else if (m == 12) {
                 int num1 = random.nextInt(10) + 5;
                 int x = random.nextInt(10) + 5;
                 //(x-num1) = (x - num1)^2
@@ -1370,7 +1322,7 @@ public class Class8 extends AppCompatActivity {
                 }
 
             }
-            if (m == 13) {
+            else if (m == 13) {
                 int k = random.nextInt(5) + 1;
                 int b = random.nextInt(5) + 1;
                 int x = random.nextInt(4) + 1;
@@ -1378,7 +1330,7 @@ public class Class8 extends AppCompatActivity {
                 int result = (x * k) + b;
                 string = Integer.toString(result);
             }
-            if (m == 14) {
+            else if (m == 14) {
                 int b1 = random.nextInt(9) + 2;
                 int b2 = random.nextInt(9) - 15;
                 //y = kx + b
@@ -1395,7 +1347,7 @@ public class Class8 extends AppCompatActivity {
                 }
 
             }
-            if (m == 15) {
+            else if (m == 15) {
                 int num3 = random.nextInt(7) + 1;
                 int num4 = num3 + 1;
 
@@ -1458,9 +1410,9 @@ public class Class8 extends AppCompatActivity {
                         }
                     }
                 }
-                task.setText(Integer.toString(num1) + "/" + Integer.toString(num2) + " × ( " + Integer.toString(num3) + "/" + Integer.toString(num4) + " - " + Integer.toString(num5) + "/" + Integer.toString(num6) + " ) = ?");
+                task.setText(Integer.toString(num1) + "/" + Integer.toString(num2) + " × ( " + Integer.toString(num3) + "/" + Integer.toString(num4) + " - " + Integer.toString(num5) + "/" + Integer.toString(num6) + " ) = ");
             }
-            if (m == 16) {
+            else if (m == 16) {
                 int num3 = random.nextInt(7) + 1;
                 int num4 = num3 + 1;
 
@@ -1523,7 +1475,7 @@ public class Class8 extends AppCompatActivity {
             }
 
             /** ТУТ СНИЗУ СТОИТ ПРОВЕРКА **/
-            if (m == 17) {
+            else if (m == 17) {
                 /** ТУТ СТОИТ ПРОВЕРКА **/
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
@@ -1545,7 +1497,7 @@ public class Class8 extends AppCompatActivity {
                 float result = ((float) d) / 10;
                 string = Float.toString(result);
             }
-            if (m == 18) {
+            else if (m == 18) {
                 /** ТУТ СТОИТ ПРОВЕРКА **/
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
@@ -1569,7 +1521,7 @@ public class Class8 extends AppCompatActivity {
                 float result = ((float) d) / 10;
                 string = Float.toString(result);
             }
-            if (m == 19) {
+            else if (m == 19) {
                 /** ТУТ СТОИТ ПРОВЕРКА **/
                 int a = random.nextInt(900) + 99;
                 float num1 = ((float) a) / 10;
@@ -1596,39 +1548,10 @@ public class Class8 extends AppCompatActivity {
             // СЛОЖНА
             // КВАДРАТНОЕ УРАВНЕНИЕ
             if (m == 20) {
-                int x1 = random.nextInt(10) + 1;
-                int x2 = random.nextInt(10) + 1;
-
-                int num1 = random.nextInt(8) + 2; //a
-                int num2 = random.nextInt(10) + 1; //b
-                int d = random.nextInt(10) + 1; //d
-
-                double a1 = ((-1 * (double) num2) + (double) d) / (2 * (double) num1);
-                double a2 = ((-1 * (double) num2) - (double) d) / (2 * (double) num1);
-
-                while (a1 % 1 != 0 && a2 % 1 != 0) {
-                    num1 = random.nextInt(8) + 2; //a
-                    num2 = random.nextInt(10) + 1; //b
-                    d = random.nextInt(10) + 1; //d
-
-                    a1 = ((-1 * (double) num2) + (double) d) / (2 * (double) num1);
-                    a2 = ((-1 * (double) num2) - (double) d) / (2 * (double) num1);
-
-                    Toast.makeText(Class8.this, "", Toast.LENGTH_SHORT).show();
-
-                    if (a1 % 1 == 0 && a2 % 1 == 0) {
-
-                        double num3 = ((double) d - num2 * num2) / (4 * num1);
-
-                        textViewBigTask.setText("Найдите сумму корней уравнения:\n" + Integer.toString(num1) + "x²" + " + " + Integer.toString(num2) + "x" + " + " + Double.toString(num3) + " = 0");
-
-                        int result = x1 + x2;
-
-                        string = Integer.toString(result);
-
-                        break;
-                    }
-                }
+                QuadraticEquation quadraticEquation = QuadraticEquation.generateQuadraticEquation(101, 200);
+                textViewBigTask.setText("Решите квадратное уравнение:\n " + quadraticEquation.getLine() + "\nЕсли уравненние имеет несколько корней, то запишите меньший из них.");
+                int result = Math.min(quadraticEquation.getInts()[0], quadraticEquation.getInts()[1]);
+                string = Integer.toString(result);
             }
 
             if ((m > 0 && m < 8) || (m > 14 && m < 20)) {
@@ -1729,5 +1652,85 @@ public class Class8 extends AppCompatActivity {
         menuInflater.inflate(R.menu.menu, menu);
 
         return true;
+    }
+
+    @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
+    public void onNumberClick(View view) {
+        switch (view.getId()) {
+            case R.id.cardOne:
+            case R.id.textView3:
+                userAnswer.append(1);
+                break;
+            case R.id.cardTwo:
+            case R.id.textView4:
+                userAnswer.append(2);
+                break;
+            case R.id.cardThree:
+            case R.id.textView9:
+                userAnswer.append(3);
+                break;
+            case R.id.cardFour:
+            case R.id.textView10:
+                userAnswer.append(4);
+                break;
+            case R.id.cardFive:
+            case R.id.textView11:
+                userAnswer.append(5);
+                break;
+            case R.id.cardSix:
+            case R.id.textView12:
+                userAnswer.append(6);
+                break;
+            case R.id.cardSeven:
+            case R.id.textView13:
+                userAnswer.append(7);
+                break;
+            case R.id.cardEight:
+            case R.id.textView14:
+                userAnswer.append(8);
+                break;
+            case R.id.cardNine:
+            case R.id.textView15:
+                userAnswer.append(9);
+                break;
+            case R.id.cardZero:
+            case R.id.textView17:
+                userAnswer.append(0);
+                break;
+            case R.id.cardA:
+            case R.id.less:
+                userAnswer.append("<");
+                break;
+            case R.id.cardB:
+            case R.id.more:
+                userAnswer.append(">");
+                break;
+            case R.id.cardC:
+            case R.id.equal:
+                userAnswer.append("=");
+                break;
+            case R.id.cardD:
+            case R.id.minus:
+                userAnswer.append("-");
+                break;
+            case R.id.cardE:
+            case R.id.fraction:
+                userAnswer.append("/");
+                break;
+            case R.id.cardF:
+            case R.id.dot:
+                userAnswer.append(".");
+                break;
+            case R.id.cardBackspace:
+            case R.id.imageView7:
+                if (userAnswer.length() != 0)
+                    userAnswer.deleteCharAt(userAnswer.length() - 1);
+                break;
+        }
+
+        SpannableString content = new SpannableString(userAnswer.toString());
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        answerTV.setText(content);
+        bigAnswer.setText(content);
     }
 }

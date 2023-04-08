@@ -1186,6 +1186,77 @@ public class Statistic extends AppCompatActivity {
 //                });
 //                AlertDialog alertDialog = builder.create();
 //                alertDialog.show();
+
+                customProgressDialog.show();
+                // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
+                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                    @Override
+                    public void onRewarded(@NonNull final Reward reward) {
+                        setViewVisibility("Invisible");
+                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putLong("8-right", 0);
+                        editor.putLong("8-not_right", 0);
+                        editor.apply();
+                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                        setStatistic();
+                        setViewVisibility("Visible");
+                        customProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onAdClicked() {
+
+                    }
+
+                    @Override
+                    public void onAdLoaded() {
+                        mRewardedAd.show();
+                        customProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
+                        setViewVisibility("Invisible");
+                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putLong("8-right", 0);
+                        editor.putLong("8-not_right", 0);
+                        editor.apply();
+                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                        setStatistic();
+                        setViewVisibility("Visible");
+                        customProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onAdShown() {
+
+                    }
+
+                    @Override
+                    public void onAdDismissed() {
+
+                    }
+
+                    @Override
+                    public void onLeftApplication() {
+
+                    }
+
+                    @Override
+                    public void onReturnedToApplication() {
+
+                    }
+
+                    @Override
+                    public void onImpression(@Nullable ImpressionData impressionData) {
+
+                    }
+                });
+
+                // Загрузка объявления.
+                mRewardedAd.loadAd(adRequest);
             }
         });
 
