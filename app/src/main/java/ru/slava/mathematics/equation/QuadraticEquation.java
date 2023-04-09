@@ -1,10 +1,14 @@
-package ru.slava.mathematics;
+package ru.slava.mathematics.equation;
 
 import java.util.Random;
 
 public class QuadraticEquation {
     private String line;
     private int[] ints = new int[2];
+
+    public QuadraticEquation() {
+
+    }
 
     public QuadraticEquation(String line, int[] ints) {
         this.line = line;
@@ -19,7 +23,7 @@ public class QuadraticEquation {
         return ints;
     }
 
-    public static QuadraticEquation generateQuadraticEquation(int left, int right) {
+    public QuadraticEquation generateQuadraticEquation(int left, int right) {
         Random random = new Random();
         int a, b, c;
         double D, x1, x2;

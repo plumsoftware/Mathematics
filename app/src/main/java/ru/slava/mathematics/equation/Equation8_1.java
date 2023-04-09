@@ -11,6 +11,10 @@ public class Equation8_1 {
         this.ints = ints;
     }
 
+    public Equation8_1() {
+
+    }
+
     public String getLine() {
         return line;
     }
@@ -19,7 +23,7 @@ public class Equation8_1 {
         return ints;
     }
 
-    public static Equation8_1 generateEquation8_1(int left, int right) {
+    public Equation8_1 generateEquation8_1(int left, int right) {
         int a, b, c, d, x, y, z;
         boolean w = true;
         Random random = new Random();
