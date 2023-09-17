@@ -28,16 +28,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.yandex.mobile.ads.banner.AdSize;
-import com.yandex.mobile.ads.banner.BannerAdEventListener;
-import com.yandex.mobile.ads.banner.BannerAdView;
+import com.yandex.mobile.ads.common.AdError;
 import com.yandex.mobile.ads.common.AdRequest;
+import com.yandex.mobile.ads.common.AdRequestConfiguration;
 import com.yandex.mobile.ads.common.AdRequestError;
 import com.yandex.mobile.ads.common.ImpressionData;
 import com.yandex.mobile.ads.common.InitializationListener;
 import com.yandex.mobile.ads.common.MobileAds;
 import com.yandex.mobile.ads.interstitial.InterstitialAd;
 import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener;
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener;
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoader;
 import com.yandex.mobile.ads.rewarded.Reward;
 import com.yandex.mobile.ads.rewarded.RewardedAd;
 import com.yandex.mobile.ads.rewarded.RewardedAdEventListener;
@@ -69,8 +70,10 @@ public class Class1 extends AppCompatActivity {
 
     //YANDEX ADS
     //private BannerAdView mBannerAdView;
-    private InterstitialAd mInterstitialAd;
-    private RewardedAd mRewardedAd;
+    @Nullable
+    private InterstitialAd mInterstitialAd = null;
+    @Nullable
+    private InterstitialAdLoader mInterstitialAdLoader = null;
 
     @SuppressLint({"SetTextI18n", "SourceLockedOrientationActivity", "CutPasteId"})
     @Override
@@ -152,52 +155,49 @@ public class Class1 extends AppCompatActivity {
 //        mBannerAdView.loadAd(adRequest);
 
         // Создание Interstitial ads
-        final AdRequest adRequestI = new AdRequest.Builder().build();
-
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getResources().getString(R.string.Interstitial_id));
-        mInterstitialAd.loadAd(adRequestI);
-
-        mInterstitialAd.setInterstitialAdEventListener(new InterstitialAdEventListener() {
+        mInterstitialAdLoader = new InterstitialAdLoader(this);
+        mInterstitialAdLoader.setAdLoadListener(new InterstitialAdLoadListener() {
             @Override
-            public void onAdLoaded() {
+            public void onAdLoaded(@NonNull final InterstitialAd interstitialAd) {
+                mInterstitialAd = interstitialAd;
+                mInterstitialAd.setAdEventListener(new InterstitialAdEventListener() {
+                    @Override
+                    public void onAdShown() {
 
+                    }
+
+                    @Override
+                    public void onAdFailedToShow(@NonNull AdError adError) {
+
+                    }
+
+                    @Override
+                    public void onAdDismissed() {
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(new Intent(Class1.this, MainActivity.class));
+                    }
+
+                    @Override
+                    public void onAdClicked() {
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(new Intent(Class1.this, MainActivity.class));
+                    }
+
+                    @Override
+                    public void onAdImpression(@Nullable ImpressionData impressionData) {
+
+                    }
+                });
+                mInterstitialAd.show(Class1.this);
             }
 
             @Override
-            public void onAdFailedToLoad(@NonNull AdRequestError error) {
-
-            }
-
-            @Override
-            public void onAdDismissed() {
+            public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
                 finish();
-                overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
-            }
-
-            @Override
-            public void onAdShown() {
-
-            }
-
-            @Override
-            public void onImpression(@Nullable final ImpressionData impressionData) {
-
-            }
-
-            @Override
-            public void onAdClicked() {
-
-            }
-
-            @Override
-            public void onReturnedToApplication() {
-
-            }
-
-            @Override
-            public void onLeftApplication() {
-
+                overridePendingTransition(0, 0);
+                startActivity(new Intent(Class1.this, MainActivity.class));
             }
         });
         /** **/
@@ -442,8 +442,10 @@ public class Class1 extends AppCompatActivity {
          overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
          }
          **/
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
+        if (mInterstitialAdLoader != null ) {
+            final AdRequestConfiguration adRequestConfiguration =
+                    new AdRequestConfiguration.Builder(getResources().getString(R.string.Interstitial_id)).build();
+            mInterstitialAdLoader.loadAd(adRequestConfiguration);
         } else {
             finish();
             overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
@@ -474,8 +476,10 @@ public class Class1 extends AppCompatActivity {
             //finish();
             //overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
             //}
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
+            if (mInterstitialAdLoader != null ) {
+                final AdRequestConfiguration adRequestConfiguration =
+                        new AdRequestConfiguration.Builder(getResources().getString(R.string.Interstitial_id)).build();
+                mInterstitialAdLoader.loadAd(adRequestConfiguration);
             } else {
                 finish();
                 overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
@@ -518,131 +522,6 @@ public class Class1 extends AppCompatActivity {
             startActivity(Intent.createChooser(mailIntent, "Отправить отчёт об ошибке с помощью..."));
         }
         return true;
-    }
-
-    private void showAd(int a, int b) {
-        //ID_ADS id_ads = new ID_ADS();
-
-        boolean bool = false;
-
-        if (bool) {
-            final AdRequest adRequestI = new AdRequest.Builder().build();
-            mInterstitialAd.loadAd(adRequestI);
-
-            if ((a + b) % 14 == 0 && mInterstitialAd.isLoaded() && (a != 0 && b != 0)) {
-                mInterstitialAd.show();
-            }
-        } else {
-            mRewardedAd = new RewardedAd(this);
-            mRewardedAd.setAdUnitId(getResources().getString(R.string.Rewarded_id));
-
-            // Создание объекта таргетирования рекламы.
-            final AdRequest adRequest = new AdRequest.Builder().build();
-
-            // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-            mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
-                @Override
-                public void onRewarded(@NonNull final Reward reward) {
-
-                }
-
-                @Override
-                public void onAdClicked() {
-
-                }
-
-                @Override
-                public void onAdLoaded() {
-                    if ((a + b) % 12 == 0 && (a != 0 && b != 0)) {
-                        mRewardedAd.show();
-                    }
-                }
-
-                @Override
-                public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-
-                }
-
-                @Override
-                public void onAdShown() {
-
-                }
-
-                @Override
-                public void onAdDismissed() {
-
-                }
-
-                @Override
-                public void onLeftApplication() {
-
-                }
-
-                @Override
-                public void onReturnedToApplication() {
-
-                }
-
-                @Override
-                public void onImpression(@Nullable ImpressionData impressionData) {
-
-                }
-            });
-
-            // Загрузка объявления.
-            mRewardedAd.loadAd(adRequest);
-        }
-
-
-        //REWARD AD
-
-        /**
-         AdRequest adRequest2 = new AdRequest.Builder().build();
-
-         RewardedAd.load(this, id_ads.ID_REWARD_AD_1,
-         adRequest2, new RewardedAdLoadCallback() {
-        @Override public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-        // Handle the error.
-        mRewardedAd = null;
-        }
-
-        @Override public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-        mRewardedAd = rewardedAd;
-        }
-        });
-
-         if (mRewardedAd != null) {
-         mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-        @Override public void onAdShowedFullScreenContent() {
-        // Called when ad is shown.
-        }
-
-        @Override public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-        // Called when ad fails to show.
-
-        finish();
-        overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
-        }
-
-        @Override public void onAdDismissedFullScreenContent() {
-        // Called when ad is dismissed.
-        // Set the ad reference to null so you don't show the ad a second time.
-        mRewardedAd = null;
-        }
-        });
-         }
-
-         if ((a + b) % 10 == 0 && mRewardedAd != null && (a != 0 || b != 0)) {
-         Activity activity = Class1.this;
-         mRewardedAd.show(activity, new OnUserEarnedRewardListener() {
-        @Override public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
-        int amount = 0;
-        amount = rewardItem.getAmount();
-        String rewardType = rewardItem.getType();
-        }
-        });
-         }
-         **/
     }
 
     @Override

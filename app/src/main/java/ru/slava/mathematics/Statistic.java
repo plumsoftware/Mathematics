@@ -1,15 +1,12 @@
 package ru.slava.mathematics;
 
 import android.annotation.SuppressLint;
-import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -17,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -28,17 +24,18 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.ybq.android.spinkit.sprite.Sprite;
-import com.github.ybq.android.spinkit.style.Circle;
-import com.github.ybq.android.spinkit.style.Wave;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.yandex.mobile.ads.common.AdError;
 import com.yandex.mobile.ads.common.AdRequest;
+import com.yandex.mobile.ads.common.AdRequestConfiguration;
 import com.yandex.mobile.ads.common.AdRequestError;
 import com.yandex.mobile.ads.common.ImpressionData;
 import com.yandex.mobile.ads.rewarded.Reward;
 import com.yandex.mobile.ads.rewarded.RewardedAd;
 import com.yandex.mobile.ads.rewarded.RewardedAdEventListener;
+import com.yandex.mobile.ads.rewarded.RewardedAdLoadListener;
+import com.yandex.mobile.ads.rewarded.RewardedAdLoader;
 
 import java.util.ArrayList;
 
@@ -51,7 +48,10 @@ public class Statistic extends AppCompatActivity {
     private CustomProgressDialog customProgressDialog;
 
     //ADS
-    private RewardedAd mRewardedAd;
+    @Nullable
+    private RewardedAd mRewardedAd = null;
+    @Nullable
+    private RewardedAdLoader mRewardedAdLoader = null;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -482,8 +482,21 @@ public class Statistic extends AppCompatActivity {
         ImageButton clear_11 = (ImageButton) findViewById(R.id.clear11);
 
         //ADS
-        mRewardedAd = new RewardedAd(this);
-        mRewardedAd.setAdUnitId(getResources().getString(R.string.Rewarded_id));
+        mRewardedAdLoader = new RewardedAdLoader(this);
+        mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
+            @Override
+            public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
+                mRewardedAd = rewardedAd;
+                // The ad was loaded successfully. Now you can show loaded ad.
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
+                // Ad failed to load with AdRequestError.
+                // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
+            }
+        });
+        loadRewardedAd();
 
         // Создание объекта таргетирования рекламы.
         final AdRequest adRequest = new AdRequest.Builder().build();
@@ -502,75 +515,70 @@ public class Statistic extends AppCompatActivity {
 
                 customProgressDialog.show();
 
-                // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                mRewardedAdLoader = new RewardedAdLoader(Statistic.this);
+                mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
                     @Override
-                    public void onRewarded(@NonNull final Reward reward) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("1-right", 0);
-                        editor.putLong("1-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
+                    public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
                         customProgressDialog.dismiss();
-                    }
+                        mRewardedAd = rewardedAd;
+                        mRewardedAd.setAdEventListener(new RewardedAdEventListener() {
+                            @Override
+                            public void onAdShown() {
+                                // Called when ad is shown.
+                            }
 
-                    @Override
-                    public void onAdClicked() {
+                            @Override
+                            public void onAdFailedToShow(@NonNull final AdError adError) {
+                                // Called when an InterstitialAd failed to show.
+                            }
 
-                    }
+                            @Override
+                            public void onAdDismissed() {
+                                // Called when ad is dismissed.
+                                // Clean resources after Ad dismissed
+                                if (mRewardedAd != null) {
+                                    mRewardedAd.setAdEventListener(null);
+                                    mRewardedAd = null;
+                                }
 
-                    @Override
-                    public void onAdLoaded() {
-                        mRewardedAd.show();
-                        customProgressDialog.dismiss();
+                                // Now you can preload the next interstitial ad.
+
+                            }
+
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                                // Called when an impression is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onRewarded(@NonNull final Reward reward) {
+                                setViewVisibility("Invisible");
+                                final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putLong("1-right", 0);
+                                editor.putLong("1-not_right", 0);
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                                setStatistic();
+                                setViewVisibility("Visible");
+                            }
+                        });
+                        mRewardedAd.show(Statistic.this);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("1-right", 0);
-                        editor.putLong("1-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
                         customProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-
-                    }
-
-                    @Override
-                    public void onLeftApplication() {
-
-                    }
-
-                    @Override
-                    public void onReturnedToApplication() {
-
-                    }
-
-                    @Override
-                    public void onImpression(@Nullable ImpressionData impressionData) {
-
+                        // Ad failed to load with AdRequestError.
+                        // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                     }
                 });
-
-                // Загрузка объявления.
-                mRewardedAd.loadAd(adRequest);
+                loadRewardedAd();
 //                    }
 //                });
 //                builder.setNegativeButton("нет", new DialogInterface.OnClickListener() {
@@ -597,76 +605,69 @@ public class Statistic extends AppCompatActivity {
 //                    public void onClick(DialogInterface dialog, int which) {
 
                 customProgressDialog.show();
-                // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                mRewardedAdLoader = new RewardedAdLoader(Statistic.this);
+                mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
                     @Override
-                    public void onRewarded(@NonNull final Reward reward) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("2-right", 0);
-                        editor.putLong("2-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
+                    public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
                         customProgressDialog.dismiss();
-                    }
+                        mRewardedAd = rewardedAd;
+                        mRewardedAd.setAdEventListener(new RewardedAdEventListener() {
+                            @Override
+                            public void onAdShown() {
+                                // Called when ad is shown.
+                            }
 
-                    @Override
-                    public void onAdClicked() {
+                            @Override
+                            public void onAdFailedToShow(@NonNull final AdError adError) {
+                                // Called when an InterstitialAd failed to show.
+                            }
 
-                    }
+                            @Override
+                            public void onAdDismissed() {
+                                // Called when ad is dismissed.
+                                // Clean resources after Ad dismissed
+                                if (mRewardedAd != null) {
+                                    mRewardedAd.setAdEventListener(null);
+                                    mRewardedAd = null;
+                                }
 
-                    @Override
-                    public void onAdLoaded() {
-                        mRewardedAd.show();
-                        customProgressDialog.dismiss();
+                                // Now you can preload the next interstitial ad.
+                            }
 
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                                // Called when an impression is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onRewarded(@NonNull final Reward reward) {
+                                setViewVisibility("Invisible");
+                                final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putLong("2-right", 0);
+                                editor.putLong("2-not_right", 0);
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                                setStatistic();
+                                setViewVisibility("Visible");
+                            }
+                        });
+                        mRewardedAd.show(Statistic.this);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("2-right", 0);
-                        editor.putLong("2-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
                         customProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-
-                    }
-
-                    @Override
-                    public void onLeftApplication() {
-
-                    }
-
-                    @Override
-                    public void onReturnedToApplication() {
-
-                    }
-
-                    @Override
-                    public void onImpression(@Nullable ImpressionData impressionData) {
-
+                        // Ad failed to load with AdRequestError.
+                        // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                     }
                 });
-
-                // Загрузка объявления.
-                mRewardedAd.loadAd(adRequest);
+                loadRewardedAd();
 //                    }
 //                });
 //                builder.setNegativeButton("нет", new DialogInterface.OnClickListener() {
@@ -694,74 +695,69 @@ public class Statistic extends AppCompatActivity {
 //                    public void onClick(DialogInterface dialog, int which) {
 
                 // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                mRewardedAdLoader = new RewardedAdLoader(Statistic.this);
+                mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
                     @Override
-                    public void onRewarded(@NonNull final Reward reward) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("3-right", 0);
-                        editor.putLong("3-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
+                    public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
                         customProgressDialog.dismiss();
-                    }
+                        mRewardedAd = rewardedAd;
+                        mRewardedAd.setAdEventListener(new RewardedAdEventListener() {
+                            @Override
+                            public void onAdShown() {
+                                // Called when ad is shown.
+                            }
 
-                    @Override
-                    public void onAdClicked() {
+                            @Override
+                            public void onAdFailedToShow(@NonNull final AdError adError) {
+                                // Called when an InterstitialAd failed to show.
+                            }
 
-                    }
+                            @Override
+                            public void onAdDismissed() {
+                                // Called when ad is dismissed.
+                                // Clean resources after Ad dismissed
+                                if (mRewardedAd != null) {
+                                    mRewardedAd.setAdEventListener(null);
+                                    mRewardedAd = null;
+                                }
 
-                    @Override
-                    public void onAdLoaded() {
-                        mRewardedAd.show();
-                        customProgressDialog.dismiss();
+                                // Now you can preload the next interstitial ad.
+                            }
+
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                                // Called when an impression is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onRewarded(@NonNull final Reward reward) {
+                                setViewVisibility("Invisible");
+                                final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putLong("3-right", 0);
+                                editor.putLong("3-not_right", 0);
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                                setStatistic();
+                                setViewVisibility("Visible");
+                            }
+                        });
+                        mRewardedAd.show(Statistic.this);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("3-right", 0);
-                        editor.putLong("3-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
                         customProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-
-                    }
-
-                    @Override
-                    public void onLeftApplication() {
-
-                    }
-
-                    @Override
-                    public void onReturnedToApplication() {
-
-                    }
-
-                    @Override
-                    public void onImpression(@Nullable ImpressionData impressionData) {
-
+                        // Ad failed to load with AdRequestError.
+                        // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                     }
                 });
-
-                // Загрузка объявления.
-                mRewardedAd.loadAd(adRequest);
+                loadRewardedAd();
 //                    }
 //                });
 //                builder.setNegativeButton("нет", new DialogInterface.OnClickListener() {
@@ -789,74 +785,70 @@ public class Statistic extends AppCompatActivity {
 //                    public void onClick(DialogInterface dialog, int which) {
 
                 // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                mRewardedAdLoader = new RewardedAdLoader(Statistic.this);
+                mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
                     @Override
-                    public void onRewarded(@NonNull final Reward reward) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("4-right", 0);
-                        editor.putLong("4-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
+                    public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
                         customProgressDialog.dismiss();
-                    }
+                        mRewardedAd = rewardedAd;
+                        mRewardedAd.setAdEventListener(new RewardedAdEventListener() {
+                            @Override
+                            public void onAdShown() {
+                                // Called when ad is shown.
+                            }
 
-                    @Override
-                    public void onAdClicked() {
+                            @Override
+                            public void onAdFailedToShow(@NonNull final AdError adError) {
+                                // Called when an InterstitialAd failed to show.
+                            }
 
-                    }
+                            @Override
+                            public void onAdDismissed() {
+                                // Called when ad is dismissed.
+                                // Clean resources after Ad dismissed
+                                if (mRewardedAd != null) {
+                                    mRewardedAd.setAdEventListener(null);
+                                    mRewardedAd = null;
+                                }
 
-                    @Override
-                    public void onAdLoaded() {
-                        mRewardedAd.show();
-                        customProgressDialog.dismiss();
+                                // Now you can preload the next interstitial ad.
+
+                            }
+
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                                // Called when an impression is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onRewarded(@NonNull final Reward reward) {
+                                setViewVisibility("Invisible");
+                                final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putLong("4-right", 0);
+                                editor.putLong("4-not_right", 0);
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                                setStatistic();
+                                setViewVisibility("Visible");
+                            }
+                        });
+                        mRewardedAd.show(Statistic.this);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("4-right", 0);
-                        editor.putLong("4-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
                         customProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-
-                    }
-
-                    @Override
-                    public void onLeftApplication() {
-
-                    }
-
-                    @Override
-                    public void onReturnedToApplication() {
-
-                    }
-
-                    @Override
-                    public void onImpression(@Nullable ImpressionData impressionData) {
-
+                        // Ad failed to load with AdRequestError.
+                        // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                     }
                 });
-
-                // Загрузка объявления.
-                mRewardedAd.loadAd(adRequest);
+                loadRewardedAd();
 //                    }
 //                });
 //                builder.setNegativeButton("нет", new DialogInterface.OnClickListener() {
@@ -883,75 +875,70 @@ public class Statistic extends AppCompatActivity {
 //                    public void onClick(DialogInterface dialog, int which) {
 
                 customProgressDialog.show();
-                // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                mRewardedAdLoader = new RewardedAdLoader(Statistic.this);
+                mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
                     @Override
-                    public void onRewarded(@NonNull final Reward reward) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("5-right", 0);
-                        editor.putLong("5-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
+                    public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
                         customProgressDialog.dismiss();
-                    }
+                        mRewardedAd = rewardedAd;
+                        mRewardedAd.setAdEventListener(new RewardedAdEventListener() {
+                            @Override
+                            public void onAdShown() {
+                                // Called when ad is shown.
+                            }
 
-                    @Override
-                    public void onAdClicked() {
+                            @Override
+                            public void onAdFailedToShow(@NonNull final AdError adError) {
+                                // Called when an InterstitialAd failed to show.
+                            }
 
-                    }
+                            @Override
+                            public void onAdDismissed() {
+                                // Called when ad is dismissed.
+                                // Clean resources after Ad dismissed
+                                if (mRewardedAd != null) {
+                                    mRewardedAd.setAdEventListener(null);
+                                    mRewardedAd = null;
+                                }
 
-                    @Override
-                    public void onAdLoaded() {
-                        mRewardedAd.show();
-                        customProgressDialog.dismiss();
+                                // Now you can preload the next interstitial ad.
+
+                            }
+
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                                // Called when an impression is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onRewarded(@NonNull final Reward reward) {
+                                setViewVisibility("Invisible");
+                                final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putLong("5-right", 0);
+                                editor.putLong("5-not_right", 0);
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                                setStatistic();
+                                setViewVisibility("Visible");
+                            }
+                        });
+                        mRewardedAd.show(Statistic.this);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("5-right", 0);
-                        editor.putLong("5-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
                         customProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-
-                    }
-
-                    @Override
-                    public void onLeftApplication() {
-
-                    }
-
-                    @Override
-                    public void onReturnedToApplication() {
-
-                    }
-
-                    @Override
-                    public void onImpression(@Nullable ImpressionData impressionData) {
-
+                        // Ad failed to load with AdRequestError.
+                        // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                     }
                 });
-
-                // Загрузка объявления.
-                mRewardedAd.loadAd(adRequest);
+                loadRewardedAd();
 //                    }
 //                });
 //                builder.setNegativeButton("нет", new DialogInterface.OnClickListener() {
@@ -978,75 +965,69 @@ public class Statistic extends AppCompatActivity {
 //                    public void onClick(DialogInterface dialog, int which) {
 
                 customProgressDialog.show();
-                // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                mRewardedAdLoader = new RewardedAdLoader(Statistic.this);
+                mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
                     @Override
-                    public void onRewarded(@NonNull final Reward reward) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("6-right", 0);
-                        editor.putLong("6-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
+                    public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
                         customProgressDialog.dismiss();
-                    }
+                        mRewardedAd = rewardedAd;
+                        mRewardedAd.setAdEventListener(new RewardedAdEventListener() {
+                            @Override
+                            public void onAdShown() {
+                                // Called when ad is shown.
+                            }
 
-                    @Override
-                    public void onAdClicked() {
+                            @Override
+                            public void onAdFailedToShow(@NonNull final AdError adError) {
+                                // Called when an InterstitialAd failed to show.
+                            }
 
-                    }
+                            @Override
+                            public void onAdDismissed() {
+                                // Called when ad is dismissed.
+                                // Clean resources after Ad dismissed
+                                if (mRewardedAd != null) {
+                                    mRewardedAd.setAdEventListener(null);
+                                    mRewardedAd = null;
+                                }
 
-                    @Override
-                    public void onAdLoaded() {
-                        mRewardedAd.show();
-                        customProgressDialog.dismiss();
+                                // Now you can preload the next interstitial ad.
+                            }
+
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                                // Called when an impression is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onRewarded(@NonNull final Reward reward) {
+                                setViewVisibility("Invisible");
+                                final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putLong("6-right", 0);
+                                editor.putLong("6-not_right", 0);
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                                setStatistic();
+                                setViewVisibility("Visible");
+                            }
+                        });
+                        mRewardedAd.show(Statistic.this);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("6-right", 0);
-                        editor.putLong("6-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
                         customProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-
-                    }
-
-                    @Override
-                    public void onLeftApplication() {
-
-                    }
-
-                    @Override
-                    public void onReturnedToApplication() {
-
-                    }
-
-                    @Override
-                    public void onImpression(@Nullable ImpressionData impressionData) {
-
+                        // Ad failed to load with AdRequestError.
+                        // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                     }
                 });
-
-                // Загрузка объявления.
-                mRewardedAd.loadAd(adRequest);
+                loadRewardedAd();
 //                    }
 //                });
 //                builder.setNegativeButton("нет", new DialogInterface.OnClickListener() {
@@ -1073,75 +1054,69 @@ public class Statistic extends AppCompatActivity {
 //                    public void onClick(DialogInterface dialog, int which) {
 
                 customProgressDialog.show();
-                // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                mRewardedAdLoader = new RewardedAdLoader(Statistic.this);
+                mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
                     @Override
-                    public void onRewarded(@NonNull final Reward reward) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("7-right", 0);
-                        editor.putLong("7-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
+                    public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
                         customProgressDialog.dismiss();
-                    }
+                        mRewardedAd = rewardedAd;
+                        mRewardedAd.setAdEventListener(new RewardedAdEventListener() {
+                            @Override
+                            public void onAdShown() {
+                                // Called when ad is shown.
+                            }
 
-                    @Override
-                    public void onAdClicked() {
+                            @Override
+                            public void onAdFailedToShow(@NonNull final AdError adError) {
+                                // Called when an InterstitialAd failed to show.
+                            }
 
-                    }
+                            @Override
+                            public void onAdDismissed() {
+                                // Called when ad is dismissed.
+                                // Clean resources after Ad dismissed
+                                if (mRewardedAd != null) {
+                                    mRewardedAd.setAdEventListener(null);
+                                    mRewardedAd = null;
+                                }
 
-                    @Override
-                    public void onAdLoaded() {
-                        mRewardedAd.show();
-                        customProgressDialog.dismiss();
+                                // Now you can preload the next interstitial ad.
+                            }
+
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                                // Called when an impression is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onRewarded(@NonNull final Reward reward) {
+                                setViewVisibility("Invisible");
+                                final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putLong("7-right", 0);
+                                editor.putLong("7-not_right", 0);
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                                setStatistic();
+                                setViewVisibility("Visible");
+                            }
+                        });
+                        mRewardedAd.show(Statistic.this);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("7-right", 0);
-                        editor.putLong("7-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
                         customProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-
-                    }
-
-                    @Override
-                    public void onLeftApplication() {
-
-                    }
-
-                    @Override
-                    public void onReturnedToApplication() {
-
-                    }
-
-                    @Override
-                    public void onImpression(@Nullable ImpressionData impressionData) {
-
+                        // Ad failed to load with AdRequestError.
+                        // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                     }
                 });
-
-                // Загрузка объявления.
-                mRewardedAd.loadAd(adRequest);
+                loadRewardedAd();
 //                    }
 //                });
 //                builder.setNegativeButton("нет", new DialogInterface.OnClickListener() {
@@ -1188,75 +1163,69 @@ public class Statistic extends AppCompatActivity {
 //                alertDialog.show();
 
                 customProgressDialog.show();
-                // Регистрация слушателя для отслеживания событий, происходящих в рекламе.
-                mRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
+                mRewardedAdLoader = new RewardedAdLoader(Statistic.this);
+                mRewardedAdLoader.setAdLoadListener(new RewardedAdLoadListener() {
                     @Override
-                    public void onRewarded(@NonNull final Reward reward) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("8-right", 0);
-                        editor.putLong("8-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
+                    public void onAdLoaded(@NonNull final RewardedAd rewardedAd) {
                         customProgressDialog.dismiss();
-                    }
+                        mRewardedAd = rewardedAd;
+                        mRewardedAd.setAdEventListener(new RewardedAdEventListener() {
+                            @Override
+                            public void onAdShown() {
+                                // Called when ad is shown.
+                            }
 
-                    @Override
-                    public void onAdClicked() {
+                            @Override
+                            public void onAdFailedToShow(@NonNull final AdError adError) {
+                                // Called when an InterstitialAd failed to show.
+                            }
 
-                    }
+                            @Override
+                            public void onAdDismissed() {
+                                // Called when ad is dismissed.
+                                // Clean resources after Ad dismissed
+                                if (mRewardedAd != null) {
+                                    mRewardedAd.setAdEventListener(null);
+                                    mRewardedAd = null;
+                                }
 
-                    @Override
-                    public void onAdLoaded() {
-                        mRewardedAd.show();
-                        customProgressDialog.dismiss();
+                                // Now you can preload the next interstitial ad.
+                            }
+
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                                // Called when an impression is recorded for an ad.
+                            }
+
+                            @Override
+                            public void onRewarded(@NonNull final Reward reward) {
+                                setViewVisibility("Invisible");
+                                final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putLong("8-right", 0);
+                                editor.putLong("8-not_right", 0);
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
+                                setStatistic();
+                                setViewVisibility("Visible");
+                            }
+                        });
+                        mRewardedAd.show(Statistic.this);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                        setViewVisibility("Invisible");
-                        final SharedPreferences sharedPreferences = getSharedPreferences("statistic", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putLong("8-right", 0);
-                        editor.putLong("8-not_right", 0);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Ваши результаты очищены.", Toast.LENGTH_SHORT).show();
-                        setStatistic();
-                        setViewVisibility("Visible");
                         customProgressDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onAdShown() {
-
-                    }
-
-                    @Override
-                    public void onAdDismissed() {
-
-                    }
-
-                    @Override
-                    public void onLeftApplication() {
-
-                    }
-
-                    @Override
-                    public void onReturnedToApplication() {
-
-                    }
-
-                    @Override
-                    public void onImpression(@Nullable ImpressionData impressionData) {
-
+                        // Ad failed to load with AdRequestError.
+                        // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
                     }
                 });
-
-                // Загрузка объявления.
-                mRewardedAd.loadAd(adRequest);
+                loadRewardedAd();
             }
         });
 
@@ -1361,5 +1330,13 @@ public class Statistic extends AppCompatActivity {
 //                alertDialog.show();
             }
         });
+    }
+
+    private void loadRewardedAd() {
+        if (mRewardedAdLoader != null ) {
+            final AdRequestConfiguration adRequestConfiguration =
+                    new AdRequestConfiguration.Builder(getResources().getString(R.string.Rewarded_id)).build();
+            mRewardedAdLoader.loadAd(adRequestConfiguration);
+        }
     }
 }

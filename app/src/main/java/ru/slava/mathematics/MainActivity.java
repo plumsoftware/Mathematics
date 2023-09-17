@@ -1,6 +1,7 @@
 package ru.slava.mathematics;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +27,15 @@ import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
 import com.github.ybq.android.spinkit.style.Wave;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.yandex.mobile.ads.appopenad.AppOpenAd;
+import com.yandex.mobile.ads.appopenad.AppOpenAdEventListener;
+import com.yandex.mobile.ads.appopenad.AppOpenAdLoadListener;
+import com.yandex.mobile.ads.appopenad.AppOpenAdLoader;
+import com.yandex.mobile.ads.common.AdError;
+import com.yandex.mobile.ads.common.AdRequestConfiguration;
+import com.yandex.mobile.ads.common.AdRequestError;
+import com.yandex.mobile.ads.common.ImpressionData;
+import com.yandex.mobile.ads.common.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
@@ -37,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
 //    private ProgressBar progressBar;
     private CustomProgressDialog customProgressDialog;
 
+    private AppOpenAdLoader appOpenAdLoader = null;
+    private final String AD_UNIT_ID = "R-M-1737730-4";
+    private final AdRequestConfiguration adRequestConfiguration = new AdRequestConfiguration.Builder(AD_UNIT_ID).build();
+    private AppOpenAd mAppOpenAd = null;
+
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +59,70 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppThemeMenu);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        customProgressDialog = new CustomProgressDialog(MainActivity.this);
+
+        customProgressDialog.show();
+        MobileAds.initialize(this, () -> {
+
+        });
+
+        appOpenAdLoader = new AppOpenAdLoader(this);
+        AppOpenAdLoadListener appOpenAdLoadListener = new AppOpenAdLoadListener() {
+            @Override
+            public void onAdLoaded(@NonNull final AppOpenAd appOpenAd) {
+                // The ad was loaded successfully. Now you can show loaded ad.
+                mAppOpenAd = appOpenAd;
+                mAppOpenAd.show(MainActivity.this);
+                customProgressDialog.dismiss();
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
+                // Ad failed to load with AdRequestError.
+                // Attempting to load a new ad from the onAdFailedToLoad() method is strongly discouraged.
+                customProgressDialog.dismiss();
+            }
+        };
+        appOpenAdLoader.setAdLoadListener(appOpenAdLoadListener);
+        appOpenAdLoader.loadAd(adRequestConfiguration);
+
+        AppOpenAdEventListener appOpenAdEventListener = new AppOpenAdEventListener() {
+            @Override
+            public void onAdShown() {
+                // Called when ad is shown.
+            }
+
+            @Override
+            public void onAdFailedToShow(@NonNull final AdError adError) {
+                // Called when ad failed to show.
+            }
+
+            @Override
+            public void onAdDismissed() {
+                // Called when ad is dismissed.
+                // Clean resources after dismiss and preload new ad.
+            }
+
+            @Override
+            public void onAdClicked() {
+                // Called when a click is recorded for an ad.
+            }
+
+            @Override
+            public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                // Called when an impression is recorded for an ad.
+            }
+        };
+
+        if (mAppOpenAd != null) {
+            mAppOpenAd.setAdEventListener(appOpenAdEventListener);
+        }
+
+        if (mAppOpenAd != null) {
+            mAppOpenAd.show(MainActivity.this);
+        }
+
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
         gridView = (GridView) findViewById(R.id.gridView);
         bottomNavigationView.setSelectedItemId(R.id.menu);
@@ -82,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
 //        builder.setView(viewLayout);
 //        builder.setCancelable(false);
 //        alertDialog = builder.create();
-        customProgressDialog = new CustomProgressDialog(MainActivity.this);
         //INTENTS
         intent1 = new Intent(getApplicationContext(), Class1.class);
         intent2 = new Intent(getApplicationContext(), Class2.class);

@@ -25,13 +25,17 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.yandex.mobile.ads.common.AdError;
 import com.yandex.mobile.ads.common.AdRequest;
+import com.yandex.mobile.ads.common.AdRequestConfiguration;
 import com.yandex.mobile.ads.common.AdRequestError;
 import com.yandex.mobile.ads.common.ImpressionData;
 import com.yandex.mobile.ads.common.InitializationListener;
 import com.yandex.mobile.ads.common.MobileAds;
 import com.yandex.mobile.ads.interstitial.InterstitialAd;
 import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener;
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener;
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoader;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -55,7 +59,10 @@ public class Class8 extends AppCompatActivity {
     private long CountNotRightS;
     private ArrayList<String> bugs = new ArrayList<>();
     //ADS
-    private InterstitialAd mInterstitialAd;
+    @Nullable
+    private InterstitialAd mInterstitialAd = null;
+    @Nullable
+    private InterstitialAdLoader mInterstitialAdLoader = null;
 
     protected StringBuilder userAnswer = new StringBuilder();
     protected TextView answerTV, rAnswer, right, notRight, task, notation, textViewBigTask, bigAnswer;
@@ -84,60 +91,54 @@ public class Class8 extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // ADS CODE START
-        MobileAds.initialize(this, new InitializationListener() {
-            @Override
-            public void onInitializationCompleted() {
+        MobileAds.initialize(this, () -> {
 
-            }
         });
 
         // Создание Interstitial ads
-        final AdRequest adRequestI = new AdRequest.Builder().build();
-
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getResources().getString(R.string.Interstitial_id));
-        mInterstitialAd.loadAd(adRequestI);
-
-        mInterstitialAd.setInterstitialAdEventListener(new InterstitialAdEventListener() {
+        mInterstitialAdLoader = new InterstitialAdLoader(this);
+        mInterstitialAdLoader.setAdLoadListener(new InterstitialAdLoadListener() {
             @Override
-            public void onAdLoaded() {
+            public void onAdLoaded(@NonNull final InterstitialAd interstitialAd) {
+                mInterstitialAd = interstitialAd;
+                mInterstitialAd.setAdEventListener(new InterstitialAdEventListener() {
+                    @Override
+                    public void onAdShown() {
 
+                    }
+
+                    @Override
+                    public void onAdFailedToShow(@NonNull AdError adError) {
+
+                    }
+
+                    @Override
+                    public void onAdDismissed() {
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(new Intent(Class8.this, MainActivity.class));
+                    }
+
+                    @Override
+                    public void onAdClicked() {
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(new Intent(Class8.this, MainActivity.class));
+                    }
+
+                    @Override
+                    public void onAdImpression(@Nullable ImpressionData impressionData) {
+
+                    }
+                });
+                mInterstitialAd.show(Class8.this);
             }
 
             @Override
-            public void onAdFailedToLoad(@NonNull AdRequestError error) {
-
-            }
-
-            @Override
-            public void onAdDismissed() {
+            public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
                 finish();
-                overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
-            }
-
-            @Override
-            public void onAdShown() {
-
-            }
-
-            @Override
-            public void onImpression(@Nullable final ImpressionData impressionData) {
-
-            }
-
-            @Override
-            public void onAdClicked() {
-
-            }
-
-            @Override
-            public void onReturnedToApplication() {
-
-            }
-
-            @Override
-            public void onLeftApplication() {
-
+                overridePendingTransition(0, 0);
+                startActivity(new Intent(Class8.this, MainActivity.class));
             }
         });
         //ADS CODE END
@@ -1613,8 +1614,10 @@ public class Class8 extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
+        if (mInterstitialAdLoader != null ) {
+            final AdRequestConfiguration adRequestConfiguration =
+                    new AdRequestConfiguration.Builder(getResources().getString(R.string.Interstitial_id)).build();
+            mInterstitialAdLoader.loadAd(adRequestConfiguration);
         } else {
             finish();
             overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
@@ -1636,8 +1639,10 @@ public class Class8 extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
+            if (mInterstitialAdLoader != null ) {
+                final AdRequestConfiguration adRequestConfiguration =
+                        new AdRequestConfiguration.Builder(getResources().getString(R.string.Interstitial_id)).build();
+                mInterstitialAdLoader.loadAd(adRequestConfiguration);
             } else {
                 finish();
                 overridePendingTransition(R.anim.anim_layout_enter_bottom, R.anim.anim_layout_close_top);
